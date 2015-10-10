@@ -1,0 +1,57 @@
+{
+	"rules": {
+		"sprints": 10,
+		"max-impact": 3,
+		"deck": [
+			[ 0, 1, 1, 4, 4, 4 ],
+			[ 0, 1, 1, 4, 4, 4 ],
+			[ 0, 1, 1, 4, 4, 4 ],
+			[ 0, 1, 1, 4, 4, 4 ],
+			[ 0, 1, 1, 4, 4, 4 ]
+		],
+
+		"initial-resources": 20,
+		"normal-planning-count": 4,
+		"normal-planning-cost": 1,
+		"over-planning-cost": 2,
+		"sprints-won-without-planning": 1,
+
+		"risk-chance": 0.8,
+
+		"economics-affects-all": true,
+		"stay-on-sprint-min-diff": 2,
+		"forced-risks": 3
+	}
+
+	"players": [
+		{
+			"name": "no planning",
+			"planning-cards": [ ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "half planning",
+			"planning-cards": [ 1, 0, 0, 1, 0 ],
+			use-"next-sprint": false
+		},
+
+		{
+			"name": "normal planning",
+			"planning-cards": [ 0, 1, 1, 1, 1 ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "full planning",
+			"planning-cards": [ 1, 1, 1, 1, 1 ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "almost never stay",
+			"planning-cards": [ 2, 2, 2, 2, 0 ],
+			"use-one-more-planning-sprint": true
+		}
+	]
+}
