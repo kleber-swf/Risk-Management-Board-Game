@@ -28,61 +28,16 @@ namespace RiskManagement {
 				var wins = SetupResult(game.Players.Length);
 				var loses = SetupResult(game.Players.Length);
 
-				Console.WriteLine("\n");
 				Print("INITIAL STATE", game.ToString(true), true);
 				if (!manual) Console.ForegroundColor = ConsoleColor.DarkYellow;
 
 				File.WriteAllText(BufferFilePath, "");
 
-				while (Condition(manual, loops)) {
-					loops--;
-					game.Clear();
-					// PLANNING
-					game.PlanningState();
-					if (manual) {
-						Print("PLANNING", game.ToString(), true);
-						Console.ReadKey();
-					}
-
-					// GAME
-
-					while (!game.Finished) {
-						innerBuffer.Clear();
-						game.TurnState();
-						if (!manual) continue;
-						PrintToBuffer(innerBuffer, true);
-						Console.ReadKey();
-					}
-
-					// RESULTS
-					if (manual) {
-						_totalLoops++;
-						Print("WINNERS", game.Winners.Aggregate("", (s, i) => s + i + " ") + "\n", true);
-						Print("LOSERS", game.Losers.Aggregate("", (s, i) => s + i + " ") + "\n", true);
-						Console.WriteLine("\n\nPRESS <ENTER> TO CONTINUE ...");
-						while (Console.ReadKey().Key != ConsoleKey.Enter) { }
-					} else {
-						var p = (_totalLoops - loops)/(float)_totalLoops;
-						var pi = (int)(p*100);
-						Console.SetCursorPosition(0, 0);
-						Console.Write("Progress: {0}{1} {2:P} ({3}/{4})", "".PadRight(pi, '█'), "".PadRight(100 - pi, '▒'), p, loops, _totalLoops);
-					}
-
-					for (var i = 0; i < game.Winners.Count; i++) wins[game.Winners[i]][i]++;
-					for (var i = 0; i < game.Losers.Count; i++) loses[game.Losers[i]][i]++;
-
-					if (game.Winners.Count == 0) _noWinners++;
-					if (game.Losers.Count == 0) _noLosers++;
-
-					if (manual) {
-						File.AppendAllText(BufferFilePath, Buffer.ToString());
-						Console.WriteLine("\n\nPRESS <ESC> TO EXIT OR ANY OTHER KEY TO CONTINUE ...");
-					}
-					Buffer.Clear();
-				}
+				if (manual) ManualLoop(game, innerBuffer, wins, loses);
+				else AutomaticLoop(game, innerBuffer, wins, loses, loops);
 
 				Console.ForegroundColor = ConsoleColor.White;
-				Console.Clear();
+
 				Print("TEST RESULTS", string.Format("loops: {0}\n", _totalLoops), true);
 				PrintResult("WINS", game.Players.Length, wins, true);
 				PrintResult("LOSES", game.Players.Length, loses, true);
@@ -104,7 +59,75 @@ namespace RiskManagement {
 			} while (true);
 		}
 
-		private static bool Condition(bool debug, int count) { return debug ? Console.ReadKey().Key != ConsoleKey.Escape : count > 0; }
+		private static void ManualLoop(Game game, StringBuilder innerBuffer, int[][] wins, int[][] loses) {
+			while (Console.ReadKey().Key != ConsoleKey.Escape) {
+				game.Clear();
+				// PLANNING
+				game.PlanningState();
+				Print("PLANNING", game.ToString(), true);
+				Console.ReadKey();
+
+				// GAME
+
+				while (!game.Finished) {
+					innerBuffer.Clear();
+					game.TurnState();
+					PrintToBuffer(innerBuffer, true);
+					Console.ReadKey();
+				}
+
+				// RESULTS
+				_totalLoops++;
+				Print("WINNERS", game.Winners.Aggregate("", (s, i) => s + i + " ") + "\n", true);
+				Print("LOSERS", game.Losers.Aggregate("", (s, i) => s + i + " ") + "\n", true);
+				Console.WriteLine("\n\nPRESS <ENTER> TO CONTINUE ...");
+				while (Console.ReadKey().Key != ConsoleKey.Enter) { }
+
+
+				for (var i = 0; i < game.Winners.Count; i++) wins[game.Winners[i]][i]++;
+				for (var i = 0; i < game.Losers.Count; i++) loses[game.Losers[i]][i]++;
+
+				if (game.Winners.Count == 0) _noWinners++;
+				if (game.Losers.Count == 0) _noLosers++;
+
+				File.AppendAllText(BufferFilePath, Buffer.ToString());
+				Console.WriteLine("\n\nPRESS <ESC> TO EXIT OR ANY OTHER KEY TO CONTINUE ...");
+				Buffer.Clear();
+			}
+		}
+
+		private static void AutomaticLoop(Game game, StringBuilder innerBuffer, int[][] wins, int[][] loses, int loops) {
+			var r = Console.CursorTop;
+
+			while (loops > 0) {
+				loops--;
+				game.Clear();
+				// PLANNING
+				game.PlanningState();
+
+				// GAME
+				while (!game.Finished) {
+					innerBuffer.Clear();
+					game.TurnState();
+				}
+
+				// RESULTS
+				var p = (_totalLoops - loops)/(float)_totalLoops;
+				var pi = (int)(p*100);
+				Console.SetCursorPosition(0, r);
+				Console.Write("Progress: {0}{1} {2:P} ({3}/{4})", "".PadRight(pi, '█'), "".PadRight(100 - pi, '▒'), p, loops, _totalLoops);
+
+				for (var i = 0; i < game.Winners.Count; i++) wins[game.Winners[i]][i]++;
+				for (var i = 0; i < game.Losers.Count; i++) loses[game.Losers[i]][i]++;
+
+				if (game.Winners.Count == 0) _noWinners++;
+				if (game.Losers.Count == 0) _noLosers++;
+
+				Buffer.Clear();
+			}
+
+			Console.SetCursorPosition(0, r + 2);
+		}
 
 		private static int[][] SetupResult(int count) {
 			var result = new int[count][];
