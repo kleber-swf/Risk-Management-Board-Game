@@ -80,16 +80,12 @@ namespace RiskManagement {
 		private string CardsToString() {
 			var result = "[\n\t";
 			var lastType = 0;
-			Card lastCard = null;
-			var count = 0;
 			foreach (var card in Cards) {
 				if (lastType != card.Type) {
-					result += string.Format("{0} x{1}\n\t", lastCard, count);
+					result += "\n\t";
 					lastType = card.Type;
-					count = 0;
 				}
-				lastCard = card;
-				count++;
+				result += card + " ";
 			}
 			return result + "\n]";
 		}
