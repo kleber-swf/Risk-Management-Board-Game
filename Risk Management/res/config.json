@@ -20,7 +20,8 @@
 
 		"economics-affects-all": true,
 		"stay-on-sprint-min-diff": 2,
-		"forced-risks": 3
+		"forced-risks": 3,
+		"only-one-winner": true
 	}
 
 	"players": [

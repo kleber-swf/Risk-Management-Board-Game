@@ -12,9 +12,13 @@ namespace RiskManagement {
 		private static int _noWinners;
 		private static int _noLosers;
 
+		private static ProgressBar _progressBar = new ProgressBar();
+
 		static void Main(string[] args) {
 			if (args.Length == 0 || !int.TryParse(args[0], out _totalLoops))
 				_totalLoops = 0;
+
+			File.WriteAllText(BufferFilePath, "");
 
 			do {
 				Cleanup();
@@ -28,28 +32,26 @@ namespace RiskManagement {
 				var wins = SetupResult(game.Players.Length);
 				var loses = SetupResult(game.Players.Length);
 
+				if (!manual) Console.WriteLine("\n");
 				Print("INITIAL STATE", game.ToString(true), true);
-				if (!manual) Console.ForegroundColor = ConsoleColor.DarkYellow;
-
-				File.WriteAllText(BufferFilePath, "");
 
 				if (manual) ManualLoop(game, innerBuffer, wins, loses);
 				else AutomaticLoop(game, innerBuffer, wins, loses, loops);
 
-				Console.ForegroundColor = ConsoleColor.White;
-
 				Print("TEST RESULTS", string.Format("loops: {0}\n", _totalLoops), true);
-				PrintResult("WINS", game.Players.Length, wins, true);
-				PrintResult("LOSES", game.Players.Length, loses, true);
+				PrintResult("WINS", game.Players.Length, wins, game.Rules.OnlyOneWinner, true);
+				PrintResult("LOSES", game.Players.Length, loses, game.Rules.OnlyOneWinner, true);
 
 				if (!manual) {
 					Print(string.Format("ALL WIN: {0} ({1:P1})", _noLosers, _noLosers/(float)_totalLoops));
 					Print(string.Format("ALL LOSE: {0} ({1:P1})", _noWinners, _noWinners/(float)_totalLoops));
 				}
 
+				Buffer.Append("\n");
 				File.AppendAllText(BufferFilePath, Buffer.ToString());
 				Beep();
 
+				Console.CursorVisible = true;
 				Console.WriteLine("\n\nPRESS <ESC> TO EXIT OR <R> TO REPEAT ...");
 				ConsoleKey key;
 				do {
@@ -98,6 +100,7 @@ namespace RiskManagement {
 
 		private static void AutomaticLoop(Game game, StringBuilder innerBuffer, int[][] wins, int[][] loses, int loops) {
 			var r = Console.CursorTop;
+			Console.CursorVisible = false;
 
 			while (loops > 0) {
 				loops--;
@@ -111,11 +114,7 @@ namespace RiskManagement {
 					game.TurnState();
 				}
 
-				// RESULTS
-				var p = (_totalLoops - loops)/(float)_totalLoops;
-				var pi = (int)(p*100);
-				Console.SetCursorPosition(0, r);
-				Console.Write("Progress: {0}{1} {2:P} ({3}/{4})", "".PadRight(pi, '█'), "".PadRight(100 - pi, '▒'), p, loops, _totalLoops);
+				_progressBar.Value = (_totalLoops - loops)/(float)_totalLoops;
 
 				for (var i = 0; i < game.Winners.Count; i++) wins[game.Winners[i]][i]++;
 				for (var i = 0; i < game.Losers.Count; i++) loses[game.Losers[i]][i]++;
@@ -125,8 +124,9 @@ namespace RiskManagement {
 
 				Buffer.Clear();
 			}
-
-			Console.SetCursorPosition(0, r + 2);
+			Console.SetCursorPosition(1, 1);
+			Console.Write("".PadRight(160));
+			Console.SetCursorPosition(0, r);
 		}
 
 		private static int[][] SetupResult(int count) {
@@ -153,16 +153,17 @@ namespace RiskManagement {
 			if (sendToConsole) Console.WriteLine(line);
 		}
 
-		private static void PrintResult(string title, int count, int[][] array, bool sendToConsole) {
+		private static void PrintResult(string title, int count, int[][] array, bool onlyOneWinner, bool sendToConsole) {
 			var result = string.Format("{0}\n{1}\n", title, "".PadRight(title.Length, '-'));
 			var d = (float)_totalLoops;
 			for (var i = 0; i < count; i++) {
 				var line = "PLAYER " + i + ":\t";
 				var sum = 0;
 				foreach (var value in array[i]) {
-					line += string.Format("{0} ({1:P1})\t", value, value/d);
+					if (!onlyOneWinner) line += string.Format("{0} ({1:P1})\t", value, value/d);
 					sum += value;
 				}
+
 				result += string.Format("{0}total: {1} ({2:P1})\n", line, sum, sum/d);
 			}
 			result += "\n";

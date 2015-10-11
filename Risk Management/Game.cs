@@ -6,7 +6,7 @@ using SimpleJSON;
 
 namespace RiskManagement {
 	public class Game {
-		private readonly Rules _rules;
+		public readonly Rules Rules;
 		public readonly Player[] Players;
 		private readonly PlayerState[] _playerStates;
 		private readonly Dice _dice;
@@ -24,8 +24,8 @@ namespace RiskManagement {
 		public Game(JSONNode json, StringBuilder buffer) {
 			_buffer = buffer;
 			_random = new Random((int)DateTime.Now.Ticks);
-			_rules = Rules.Deserialize(json["rules"]);
-			_dice = new Dice(_rules.RiskChance);
+			Rules = Rules.Deserialize(json["rules"]);
+			_dice = new Dice(Rules.RiskChance);
 
 			var playersJson = json["players"];
 			var playerCount = playersJson.Count;
@@ -38,8 +38,11 @@ namespace RiskManagement {
 				_playerStates[i] = new PlayerState();
 		}
 
+		private bool _finished;
+
 		public bool Finished {
 			get {
+				if (_finished) return true;
 				foreach (var state in _playerStates)
 					if (state.State == State.Playing) return false;
 				return true;
@@ -47,7 +50,7 @@ namespace RiskManagement {
 		}
 
 		public void ShuffleCards() {
-			_deck = new List<Card>(_rules.Cards);
+			_deck = new List<Card>(Rules.Cards);
 			_deck.Shuffle();
 		}
 
@@ -57,11 +60,12 @@ namespace RiskManagement {
 			Losers.Clear();
 			_currentPlayer = int.MaxValue - 2;
 			_currentTurn = 0;
+			_finished = false;
 
 			_forcedRiskSprints.Clear();
 
-			while (_forcedRiskSprints.Count < _rules.ForcedRiskCount) {
-				var r = (int)Math.Floor(_random.NextDouble()*_rules.SprintCount);
+			while (_forcedRiskSprints.Count < Rules.ForcedRiskCount) {
+				var r = (int)Math.Floor(_random.NextDouble()*Rules.SprintCount);
 				if (_forcedRiskSprints.Contains(r)) continue;
 				_forcedRiskSprints.Add(r);
 			}
@@ -73,7 +77,7 @@ namespace RiskManagement {
 				var state = _playerStates[i];
 
 				state.Sprint = 0;
-				state.Resources = _rules.InitialResources;
+				state.Resources = Rules.InitialResources;
 				state.State = State.Playing;
 
 				var planningCardsCount = player.PlanningCardsCount;
@@ -81,15 +85,15 @@ namespace RiskManagement {
 
 				if (planningCardsCount == 0) state.Sprint = 1;
 				else {
-					over = planningCardsCount - _rules.NormalPlanningCount;
+					over = planningCardsCount - Rules.NormalPlanningCount;
 					if (player.UseOneMorePlanningSprint) {
 						state.Sprint = -1;
-						state.Resources -= over*_rules.NormalPlanningCost;
+						state.Resources -= over*Rules.NormalPlanningCost;
 					} else if (over > 0)
-						state.Resources -= over*_rules.OverPlanningCost;
+						state.Resources -= over*Rules.OverPlanningCost;
 					else over = 0;
 				}
-				state.Resources -= (planningCardsCount - over)*_rules.NormalPlanningCost;
+				state.Resources -= (planningCardsCount - over)*Rules.NormalPlanningCost;
 			}
 		}
 
@@ -128,11 +132,11 @@ namespace RiskManagement {
 			} else {
 				var card = DrawCard();
 				var good = card.Impact < 0;
-				var all = _rules.EconomicsAffectsAll && card.Type == Card.EconomicsIndex;
+				var all = Rules.EconomicsAffectsAll && card.Type == Card.EconomicsIndex;
 				int value;
 				if (!good) {
 					var diff = card.Impact - player.PlannedForCard(card.Type);
-					advance = diff < _rules.StayOnSprintMinDiff;
+					advance = diff < Rules.StayOnSprintMinDiff;
 					value = Math.Max(0, diff);
 				} else {
 					advance = true;
@@ -161,9 +165,16 @@ namespace RiskManagement {
 
 
 			if (advance) state.Sprint++;
-			if (state.Sprint > _rules.SprintCount) {
+			if (state.Sprint > Rules.SprintCount) {
 				state.State = State.Won;
 				Winners.Add(playerIndex);
+				if (Rules.OnlyOneWinner) {
+					_finished = true;
+					for (var i = 0; i < _playerStates.Length; i++) {
+						if (i == playerIndex) continue;
+						if (!Losers.Contains(i)) Losers.Add(i);
+					}
+				}
 			}
 			Print("\t" + state);
 		}
@@ -184,7 +195,7 @@ namespace RiskManagement {
 
 		public string ToString(bool initial) {
 			if (initial)
-				return string.Format("RULES\n-----\n\n{0}\n\n\nPLAYERS:\n{1}\n", _rules, Players.Aggregate("", (s, player) => s + player + "\n\n"));
+				return string.Format("RULES\n-----\n\n{0}\n\n\nPLAYERS:\n{1}\n", Rules, Players.Aggregate("", (s, player) => s + player + "\n\n"));
 
 			var result = "";
 			for (var i = 0; i < _playerStates.Length; i++)

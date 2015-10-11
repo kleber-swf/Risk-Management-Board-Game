@@ -18,6 +18,7 @@ namespace RiskManagement {
 		public bool EconomicsAffectsAll { get; private set; }
 		public int StayOnSprintMinDiff { get; private set; }
 		public int ForcedRiskCount { get; private set; }
+		public bool OnlyOneWinner { get; private set; }
 
 		private Rules() { }
 
@@ -35,7 +36,8 @@ namespace RiskManagement {
 				RiskChance = json["risk-chance"].AsFloat,
 				EconomicsAffectsAll = json["economics-affects-all"].AsBool,
 				StayOnSprintMinDiff = json["stay-on-sprint-min-diff"].AsInt,
-				ForcedRiskCount = json["forced-risks"].AsInt
+				ForcedRiskCount = json["forced-risks"].AsInt,
+				OnlyOneWinner = json["only-one-winner"].AsBool
 			};
 		}
 
@@ -61,7 +63,7 @@ namespace RiskManagement {
 			return string.Format("sprints: {0},\nmax-impact:{1},\ndeck: \n{2},\n\ninitial-resources: {3},\n\nnormal-planning-count: {4},\n" +
 			                     "normal-planning-cost: {5},\nover-planning-cost: {6},\nsprints-won-without-planning: {7},\n\n" +
 			                     "risk-chance: {8},\n\n" + "economics-affects-all: {9},\nstay-on-sprint-min-diff: {10},\n" +
-			                     "forced-risks: {11}",
+			                     "forced-risks: {11},\nonly-one-winner: {12}",
 				SprintCount,
 				MaxImpact,
 				CardsToString(),
@@ -73,7 +75,8 @@ namespace RiskManagement {
 				RiskChance,
 				EconomicsAffectsAll,
 				StayOnSprintMinDiff,
-				ForcedRiskCount
+				ForcedRiskCount,
+				OnlyOneWinner
 				);
 		}
 
