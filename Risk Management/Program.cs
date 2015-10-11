@@ -7,12 +7,12 @@ using SimpleJSON;
 namespace RiskManagement {
 	class Program {
 		private static readonly string BufferFilePath = AppDomain.CurrentDomain.BaseDirectory + "\\result.txt";
-		private static int _totalLoops;
+		private static readonly ProgressBar ProgressBar = new ProgressBar();
 		private static readonly StringBuilder Buffer = new StringBuilder();
+
+		private static int _totalLoops;
 		private static int _noWinners;
 		private static int _noLosers;
-
-		private static ProgressBar _progressBar = new ProgressBar();
 
 		static void Main(string[] args) {
 			if (args.Length == 0 || !int.TryParse(args[0], out _totalLoops))
@@ -63,7 +63,7 @@ namespace RiskManagement {
 
 		private static void ManualLoop(Game game, StringBuilder innerBuffer, int[][] wins, int[][] loses) {
 			while (Console.ReadKey().Key != ConsoleKey.Escape) {
-				game.Clear();
+				game.StartNew();
 				// PLANNING
 				game.PlanningState();
 				Print("PLANNING", game.ToString(), true);
@@ -104,7 +104,7 @@ namespace RiskManagement {
 
 			while (loops > 0) {
 				loops--;
-				game.Clear();
+				game.StartNew();
 				// PLANNING
 				game.PlanningState();
 
@@ -114,7 +114,7 @@ namespace RiskManagement {
 					game.TurnState();
 				}
 
-				_progressBar.Value = (_totalLoops - loops)/(float)_totalLoops;
+				ProgressBar.Value = (_totalLoops - loops)/(float)_totalLoops;
 
 				for (var i = 0; i < game.Winners.Count; i++) wins[game.Winners[i]][i]++;
 				for (var i = 0; i < game.Losers.Count; i++) loses[game.Losers[i]][i]++;

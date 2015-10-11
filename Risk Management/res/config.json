@@ -3,25 +3,24 @@
 		"sprints": 10,
 		"max-impact": 3,
 		"deck": [
-			[ 0, 1, 1, 4, 4, 4 ],
-			[ 0, 1, 1, 4, 4, 4 ],
-			[ 0, 1, 1, 4, 4, 4 ],
-			[ 0, 1, 1, 4, 4, 4 ],
-			[ 0, 1, 1, 4, 4, 4 ]
+			[ 0, 1, 1, 5, 5, 4 ],
+			[ 0, 1, 1, 5, 5, 4 ],
+			[ 0, 1, 1, 5, 5, 4 ],
+			[ 0, 1, 1, 5, 5, 4 ],
+			[ 0, 1, 1, 5, 5, 4 ]
 		],
 
-		"initial-resources": 20,
+		"initial-resources": 24,
 		"normal-planning-count": 4,
 		"normal-planning-cost": 1,
 		"over-planning-cost": 2,
 		"sprints-won-without-planning": 1,
 
-		"risk-chance": 0.8,
+		"risk-chances": [ 0.66, 0.66, 0.66, 0.83, 0.83, 0.83, 0.83, 1, 1, 1 ],
 
 		"economics-affects-all": true,
 		"stay-on-sprint-min-diff": 2,
-		"forced-risks": 3,
-		"only-one-winner": true
+		"only-one-winner": false
 	}
 
 	"players": [
@@ -34,7 +33,13 @@
 		{
 			"name": "half planning",
 			"planning-cards": [ 1, 0, 0, 1, 0 ],
-			use-"next-sprint": false
+			"use-next-sprint": false
+		},
+
+		{
+			"name": "half planning with economics",
+			"planning-cards": [ 1, 0, 0, 0, 1 ],
+			"use-next-sprint": false
 		},
 
 		{
@@ -50,8 +55,26 @@
 		},
 
 		{
+			"name": "full planning + economics",
+			"planning-cards": [ 0, 1, 1, 1, 2 ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "almost full planning",
+			"planning-cards": [ 0, 0, 1, 2, 1 ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "almost full planning with economics",
+			"planning-cards": [ 0, 0, 1, 1, 2 ],
+			"use-one-more-planning-sprint": false
+		},
+
+		{
 			"name": "almost never stay",
-			"planning-cards": [ 2, 2, 2, 2, 0 ],
+			"planning-cards": [ 0, 2, 2, 2, 2 ],
 			"use-one-more-planning-sprint": true
 		}
 	]

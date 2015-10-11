@@ -16,7 +16,8 @@ namespace RiskManagement {
 		public readonly List<int> Losers = new List<int>();
 		private int _currentPlayer = int.MaxValue - 2;
 		private int _currentTurn;
-		private readonly List<int> _forcedRiskSprints = new List<int>();
+//		private readonly List<int> _forcedRiskSprints = new List<int>();
+		private List<float> _chances;
 		private readonly Random _random;
 
 		private readonly StringBuilder _buffer;
@@ -25,7 +26,7 @@ namespace RiskManagement {
 			_buffer = buffer;
 			_random = new Random((int)DateTime.Now.Ticks);
 			Rules = Rules.Deserialize(json["rules"]);
-			_dice = new Dice(Rules.RiskChance);
+			_dice = new Dice();
 
 			var playersJson = json["players"];
 			var playerCount = playersJson.Count;
@@ -39,6 +40,7 @@ namespace RiskManagement {
 		}
 
 		private bool _finished;
+		private int _currentChanceIndex;
 
 		public bool Finished {
 			get {
@@ -54,21 +56,17 @@ namespace RiskManagement {
 			_deck.Shuffle();
 		}
 
-		public void Clear() {
+		public void StartNew() {
 			ShuffleCards();
 			Winners.Clear();
 			Losers.Clear();
-			_currentPlayer = int.MaxValue - 2;
+			_currentPlayer = Players.Length;
 			_currentTurn = 0;
 			_finished = false;
 
-			_forcedRiskSprints.Clear();
-
-			while (_forcedRiskSprints.Count < Rules.ForcedRiskCount) {
-				var r = (int)Math.Floor(_random.NextDouble()*Rules.SprintCount);
-				if (_forcedRiskSprints.Contains(r)) continue;
-				_forcedRiskSprints.Add(r);
-			}
+			_currentChanceIndex = -1;
+			_chances = new List<float>(Rules.RiskChances);
+			_chances.Shuffle();
 		}
 
 		public void PlanningState() {
@@ -104,6 +102,8 @@ namespace RiskManagement {
 				_currentPlayer = 0;
 				if (_currentTurn > 0) Print("\n\nGAME STATE\n{0}\n\n-- END OF TURN {1} --\n\n", this, _currentTurn);
 				Print("-- BEGINNING OF TURN " + (++_currentTurn) + " --");
+				_currentChanceIndex = (_currentChanceIndex + 1)%_chances.Count;
+				Print("RISK CHANCE: " + Rules.RiskChances[_currentChanceIndex]);
 			}
 			PlayerTurn(_currentPlayer);
 		}
@@ -126,7 +126,7 @@ namespace RiskManagement {
 			}
 
 			bool advance;
-			if (!(ForceRisk(state.Sprint) || _dice.Roll())) {
+			if (!_dice.Roll(_chances[_currentChanceIndex])) {
 				advance = true;
 				Print("CARD: none, advance");
 			} else {
@@ -143,7 +143,7 @@ namespace RiskManagement {
 					value = card.Impact;
 				}
 				Print("CARD: {0}, {1}{2} {3} and {4}", card,
-					all ? "ALL " : "", good ? "receives" : "pays", value, advance ? "advance" : "stay");
+					all ? "ALL " : "", good ? "receives" : "pays", Math.Abs(value), advance ? "advance" : "stay");
 
 				if (!all) {
 					state.Resources -= value;
@@ -177,12 +177,6 @@ namespace RiskManagement {
 				}
 			}
 			Print("\t" + state);
-		}
-
-		private bool ForceRisk(int sprint) {
-			var r = _forcedRiskSprints.Contains(sprint);
-			if (r) Print("Forced!");
-			return r;
 		}
 
 		private Card DrawCard() {

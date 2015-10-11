@@ -20,14 +20,6 @@ namespace RiskManagement {
 
 		private Player() { }
 
-		public override string ToString() {
-			return string.Format(
-				"name: {0},\nplanning-cards: [{1}]\nuse-one-more-planning-sprint: {2}",
-				Name,
-				PlanningCardsToString(),
-				UseOneMorePlanningSprint);
-		}
-
 		public string PlanningCardsToString() {
 			var result = " ";
 			for (var i = 0; i < PlanningCards.Length; i++) {
@@ -52,6 +44,14 @@ namespace RiskManagement {
 			for (var i = 0; i < len; i++)
 				result[i] = json[i].AsInt;
 			return result;
+		}
+
+		public override string ToString() {
+			return string.Format(
+				"name: {0},\nplanning-cards: [{1}]\nuse-one-more-planning-sprint: {2}",
+				Name,
+				PlanningCardsToString(),
+				UseOneMorePlanningSprint);
 		}
 	}
 }
