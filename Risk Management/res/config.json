@@ -10,13 +10,13 @@
 			[ 0, 1, 1, 5, 5, 4 ]
 		],
 
-		"initial-resources": 24,
+		"initial-resources": 20,
 		"normal-planning-count": 4,
 		"normal-planning-cost": 1,
 		"over-planning-cost": 2,
 		"sprints-won-without-planning": 1,
 
-		"risk-chances": [ 0.66, 0.66, 0.66, 0.83, 0.83, 0.83, 0.83, 1, 1, 1 ],
+		"risk-chances": [ 0.66, 0.66, 0.66, 0.66, 0.66, 0.83, 0.83, 0.83, 0.83, 0.83, 0.83, 0.83, 0.83, 0.83, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.83, 0.83, 0.83, 0.83, 0.83, 1, 1, 1, 1, 1 ],
 
 		"economics-affects-all": true,
 		"stay-on-sprint-min-diff": 2,
@@ -68,8 +68,14 @@
 
 		{
 			"name": "almost full planning with economics",
-			"planning-cards": [ 0, 0, 1, 1, 2 ],
+			"planning-cards": [ 0, 0, 0, 0, 2 ],
 			"use-one-more-planning-sprint": false
+		},
+
+		{
+			"name": "almost never stay",
+			"planning-cards": [ 2, 2, 2, 2, 0 ],
+			"use-one-more-planning-sprint": true
 		},
 
 		{

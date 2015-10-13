@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using SimpleJSON;
 
 namespace RiskManagement {
@@ -19,6 +18,7 @@ namespace RiskManagement {
 
 		public bool EconomicsAffectsAll { get; private set; }
 		public int StayOnSprintMinDiff { get; private set; }
+
 		public bool OnlyOneWinner { get; private set; }
 
 		private Rules() { }
