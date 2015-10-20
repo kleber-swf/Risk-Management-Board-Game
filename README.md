@@ -22,7 +22,7 @@ Cada carta de IMPREVISTO possui um tipo, que especifica de onde os recursos ser�
 * **Econômico**: relacionado a problemas vindos de fora da empresa de âmbito econômico ou político
 
 ## Cartas de Sprint ##
-* Cartas de SPRINT são abertas como o primeiro movimento do turno e elas ditam a sorte dos jogadores:
+Cartas de SPRINT são abertas como o primeiro movimento do turno e elas ditam a sorte dos jogadores:
 * **Guarda-chuva**: os jogadores podem tirar 5 ou 6 no dado para não enfrentar um imprevisto
 * **Bomba**: os jogadores precisam tirar 6 no dado para não enfrentar um imprevisto
 * **Fogo**: os jogadores são obrigados a enfrentar um imprevisto
@@ -35,6 +35,7 @@ O jogador pode enfrentar um desafio a cada turno dependendo da carta de sprint e
 * caso seja de imprevisto bom, ele recebe a quantidade de recursos do impacto da carta
 * se a quantidade paga for maior que 1, o jogador fica na sprint, caso contrário ele avança para a próxima
 * Observação: o jogador não descarta a CARTA DE PLANEJAMENTO ao enfrentar um imprevisto.
+
 **Caso especial**: se a carta seja do tipo Econômico, todos devem enfrentá-la, mas somente o jogador que a tirou deve ficar na sprint caso a diferença seja maior que 1.
 
 ## Como jogar ##
@@ -50,8 +51,10 @@ Hora de planejar o projeto. Cada jogador pode fazer sua estratégia seguindo as 
 * o jogador pode optar em ficar mais uma rodada no planejamento para poder comprar até mais 4 CARTAS DE PLANEJAMENTO pelo valor de 1 RECURSO cada
 * caso o jogador não gaste nenhum RECURSO em planejamento, ele já começa na Sprint 1
 * as CARTAS DE PLANEJAMENTO ficam com o jogador até o final do jogo
+
 ### Fase 2: Desenvolvimento ###
 Com o planejamento pronto, agora é hora de desenvolver o projeto e por a prova o seu planejamento.
+
 #### O turno ####
 * o primeiro movimento do turno sempre consiste em abrir uma carta de SPRINT para saber como será a sorte dos jogadores naquele turno
 * a seguir, cada jogador joga da seguinte forma:
