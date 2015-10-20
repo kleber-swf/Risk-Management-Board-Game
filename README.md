@@ -1,5 +1,6 @@
 # Risk Management Board Game #
-English description and material coming soon.
+* English description and material coming soon.
+* Material in pt-br and en-us coming soon
 
 ## Material ##
 * 1 Tabuleiro
