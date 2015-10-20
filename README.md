@@ -63,11 +63,11 @@ Com o planejamento pronto, agora é hora de desenvolver o projeto e por a prova 
 	* **enfrenta o imprevisto se necessário**: vide "Enfrentando um imprevisto"
 	* **avança ou fica na sprint**
 
-### Vitória e derrota ###
+#### Vitória e derrota ####
 * o jogador ganha quando chega na entrega com 0 ou mais recursos
 * o jogador que não puder pagar por um imprevisto perde o jogo
 
-### Observações ###
+#### Observações ####
 * o primeiro turno dos jogadores que escolheram ficar uma rodada a mais no planejamento é pulado e mesmo que uma carta de SPRINT fogo seja aberta, eles não enfrentarão o imprevisto
 * o turno termina depois da jogada do último jogador. Se 2 jogadores chegarem na entrega no mesmo turno, o critério de desempate é a quantidade de recursos que cada um possui. Caso seja o mesmo, ambos ganham.
 * caso o jogador fique com 0 de recursos, ele continua jogando até que não consiga pagar um imprevisto
